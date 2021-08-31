@@ -44,35 +44,38 @@ function acaoMichaelJacksonBot() {
     fs.writeFileSync("imagem_temporaria.jpg", res1.body);    
     var b64content = fs.readFileSync("imagem_temporaria.jpg", { encoding: 'base64' })
 
+    let date_ob = new Date();
+    var month = date_ob.getMonth() + 1;
+    var day = date_ob.getDate();
+    var isMichaelsBirthday = month == 8 && day == 29;
+
+    console.log(day + " " + month + " " + date_ob)
+
 // first we must post the media to Twitter
 michaelJacksonBot.post('media/upload', { media_data: b64content }, function (err, data, response) {
     // now we can assign alt text to the media, for use by screen readers and
     // other text-based presentations and interpreters
     var mediaIdStr = data.media_id_string
     var altText = "Michael Jackson."
-    let date_ob = new Date();
 
-    var month = date_ob.getMonth() + 1;
-    var day = date_ob.getDate();
 
     var status = "";
 
-var isMichaelsBirthday = month == 8 && day == 29;
 
     if(isMichaelsBirthday)
     {
-        status = "#HappyBirthdayMichaelJacksons";
+        status = "Happy Birthday Michael Jackson #HappyBirthdayMichaelJackson";
     }
 
-    var meta_params = { status: "", media_id: mediaIdStr, alt_text: { text: altText } }
+    var meta_params = { media_id: mediaIdStr, alt_text: { text: altText } }
   
     michaelJacksonBot.post('media/metadata/create', meta_params, function (err, data, response) {
       if (!err) {
         // now we can reference the media and post a tweet (media will attach to the tweet)
-        var params = { media_ids: [mediaIdStr] }
+        var params = { status: status, media_ids: [mediaIdStr] }
   
         michaelJacksonBot.post('statuses/update', params, function (err, data, response) {
-          console.log(data)
+          
         })
       }
     })
@@ -89,9 +92,6 @@ var isMichaelsBirthday = month == 8 && day == 29;
  }
 
  acaoMichaelJacksonBot();
-
- // 2 horas
- setTimeout(acaoMichaelJacksonBot, 2 * 60 * 60 * 1000);
 
  // 24 horas
  setInterval(obterListaDeImagens, 24 * 60 * 60 * 1000);
